@@ -4,14 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBed, faCar, faPerson, faPlane, faTaxi } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
 
-import { DateRange } from 'react-date-range';
 import { useState } from 'react';
+import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 function Header({ type }) {
+    const [destiantion, setDestination] = useState('');
     const [openDate, setOpenDate] = useState(false);
     const [date, setDate] = useState([
         {
@@ -24,8 +26,10 @@ function Header({ type }) {
     const [options, setOptions] = useState({
         adult: 1,
         children: 0,
-        room: 0,
+        room: 1,
     });
+
+    const navigate = useNavigate();
     const handleOption = (name, operation) => {
         setOptions((prev) => {
             return {
@@ -33,6 +37,10 @@ function Header({ type }) {
                 [name]: operation === 'i' ? options[name] + 1 : options[name] - 1,
             };
         });
+    };
+
+    const handleSearch = () => {
+        navigate('/hotels', { state: { destiantion, date, options } });
     };
     return (
         <div className={cx('header')}>
@@ -74,6 +82,7 @@ function Header({ type }) {
                                     type="text"
                                     placeholder="Where are you going"
                                     className={cx('headerSearchInput')}
+                                    onChange={(e) => setDestination(e.target.value)}
                                 />
                             </div>
                             <div className={cx('headerSearchItem')}>
@@ -95,6 +104,7 @@ function Header({ type }) {
                                         onChange={(item) => setDate([item.selection])}
                                         moveRangeOnFirstSelection={false}
                                         ranges={date}
+                                        minDate={new Date()}
                                         className={cx('date')}
                                     />
                                 )}
@@ -168,7 +178,9 @@ function Header({ type }) {
                                 )}
                             </div>
                             <div className={cx('headerSearchItem')}>
-                                <button className={cx('headerBtn')}>Search</button>
+                                <button className={cx('headerBtn')} onClick={handleSearch}>
+                                    Search
+                                </button>
                             </div>
                         </div>
                     </>
