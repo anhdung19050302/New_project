@@ -16,6 +16,7 @@
     border-radius: 10px;
     position: sticky;
     top: 10px;
+    height: max-content;
     & > button {
         padding: 10px;
         background-color: #0071c2;
@@ -44,7 +45,7 @@
         border: none;
         padding: 5px;
     }
-    & > span {
+    > span {
         height: 30px;
         border: none;
         padding: 5px;
@@ -53,6 +54,20 @@
         align-items: center;
         cursor: pointer;
     }
+}
+
+.date {
+    position: absolute;
+    top: 150px;
+}
+.lsItem > span {
+    height: 30px;
+    border: none;
+    padding: 5px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 
 .lsOptionItem {

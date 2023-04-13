@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { DateRange } from 'react-date-range';
+import SearchItem from '~/components/SearchItem';
 
 const cx = classNames.bind(styles);
 
@@ -39,6 +40,7 @@ function List() {
                             </span>
                             {openDate && (
                                 <DateRange
+                                    className={cx('date')}
                                     editableDateInputs={true}
                                     onChange={(item) => setDate([item.selection])}
                                     moveRangeOnFirstSelection={false}
@@ -88,7 +90,17 @@ function List() {
                         </div>
                         <button>Search</button>
                     </div>
-                    <div className={cx('listResult')}></div>
+                    <div className={cx('listResult')}>
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                        <SearchItem />
+                    </div>
                 </div>
             </div>
         </div>
