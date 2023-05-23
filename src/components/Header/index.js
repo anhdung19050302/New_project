@@ -4,18 +4,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBed, faCar, faPerson, faPlane, faTaxi } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { SearchContext } from '~/context/SearchContext';
+import { AuthContext } from '~/context/AuthContext';
 const cx = classNames.bind(styles);
 
 function Header({ type }) {
     const [destiantion, setDestination] = useState('');
     const [openDate, setOpenDate] = useState(false);
-    const [date, setDate] = useState([
+    const [dates, setDates] = useState([
         {
             startDate: new Date(),
             endDate: new Date(),
@@ -30,6 +32,7 @@ function Header({ type }) {
     });
 
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const handleOption = (name, operation) => {
         setOptions((prev) => {
             return {
@@ -39,8 +42,18 @@ function Header({ type }) {
         });
     };
 
+    const { dispatch } = useContext(SearchContext);
+
     const handleSearch = () => {
-        navigate('/hotels', { state: { destiantion, date, options } });
+        dispatch({
+            type: 'NEW_SEARCH',
+            payload: {
+                destiantion,
+                dates,
+                options,
+            },
+        });
+        navigate('/hotels', { state: { destiantion, dates, options } });
     };
     return (
         <div className={cx('header')}>
@@ -74,7 +87,7 @@ function Header({ type }) {
                             Get rewarded for your travels – unlock instant savings of 10% or more with a free
                             Lamabooking account
                         </p>
-                        <button className={cx('headerBtn')}>Sign in / Register</button>
+                        {!user && <button className={cx('headerBtn')}>Sign in / Register</button>}
                         <div className={cx('headerSearch')}>
                             <div className={cx('headerSearchItem')}>
                                 <FontAwesomeIcon icon={faBed} className={cx('headerIcon')} />
@@ -93,17 +106,17 @@ function Header({ type }) {
                                     }}
                                     className={cx('headerSearchText')}
                                 >
-                                    {`${format(date[0].startDate, 'dd/MM/yyyy')} to ${format(
-                                        date[0].endDate,
+                                    {`${format(dates[0].startDate, 'dd/MM/yyyy')} to ${format(
+                                        dates[0].endDate,
                                         'dd/MM/yyyy',
                                     )}`}
                                 </span>
                                 {openDate && (
                                     <DateRange
                                         editableDateInputs={true}
-                                        onChange={(item) => setDate([item.selection])}
+                                        onChange={(item) => setDates([item.selection])}
                                         moveRangeOnFirstSelection={false}
-                                        ranges={date}
+                                        ranges={dates}
                                         minDate={new Date()}
                                         className={cx('date')}
                                     />

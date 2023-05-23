@@ -4,14 +4,18 @@ import ReactDOM from 'react-dom/client';
 import App from '~/App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from '~/components/GlobalStyles';
+import { SearchContextProvider } from './context/SearchContext';
+import { AuthContextProvider } from './context/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
-        <GlobalStyles>
-            <App />
-        </GlobalStyles>
-    </React.StrictMode>,
+    <GlobalStyles>
+        <AuthContextProvider>
+            <SearchContextProvider>
+                <App />
+            </SearchContextProvider>
+        </AuthContextProvider>
+    </GlobalStyles>,
 );
 
 // If you want to start measuring performance in your app, pass a function

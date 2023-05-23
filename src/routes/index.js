@@ -1,6 +1,7 @@
 import Home from '~/Pages/Home';
 import Hotel from '~/Pages/Hotel';
 import List from '~/Pages/List';
+import Login from '~/Pages/Login';
 
 export const publicRoutes = [
     {
@@ -14,5 +15,9 @@ export const publicRoutes = [
     {
         path: '/hotels/:id',
         component: Hotel,
+    },
+    {
+        path: '/login',
+        component: Login,
     },
 ];

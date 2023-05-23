@@ -1,67 +1,36 @@
 import classNames from 'classnames/bind';
+import useFetch from '~/hooks/useFetch';
+import localhost from '~/config';
 import styles from './FeaturedProperties.module.scss';
 
 const cx = classNames.bind(styles);
 
 function FeaturedProperties() {
+    const url = `${localhost}/hotels?featured=true&limit=4`;
+
+    const { data, loading, error } = useFetch(url);
     return (
         <div className={cx('fp')}>
-            <div className={cx('fpItem')}>
-                <img
-                    className={cx('fpImg')}
-                    src="https://r-xx.bstatic.com/xdata/images/city/170x136/688907.jpg?k=8a219233969467d9f7ff828918cce2a53b4db6f1da1039d27222441ffb97c409&o="
-                    alt=""
-                />
-                <span className={cx('fpName')}>Aparthotel Stare Miasto</span>
-                <span className={cx('fpCity')}>Old Town, Poland, Kraków</span>
-                <span className={cx('fpPrice')}>Starting from VND 2,300,000</span>
-                <div className={cx('fpRating')}>
-                    <button>8.9</button>
-                    <span>Exceptional</span>
-                </div>
-            </div>
-            <div className={cx('fpItem')}>
-                <img
-                    className={cx('fpImg')}
-                    src="https://r-xx.bstatic.com/xdata/images/city/170x136/688907.jpg?k=8a219233969467d9f7ff828918cce2a53b4db6f1da1039d27222441ffb97c409&o="
-                    alt=""
-                />
-                <span className={cx('fpName')}>Aparthotel Stare Miasto</span>
-                <span className={cx('fpCity')}>Old Town, Poland, Kraków</span>
-                <span className={cx('fpPrice')}>Starting from VND 2,300,000</span>
-                <div className={cx('fpRating')}>
-                    <button>8.9</button>
-                    <span>Exceptional</span>
-                </div>
-            </div>
-            <div className={cx('fpItem')}>
-                <img
-                    className={cx('fpImg')}
-                    src="https://r-xx.bstatic.com/xdata/images/city/170x136/688907.jpg?k=8a219233969467d9f7ff828918cce2a53b4db6f1da1039d27222441ffb97c409&o="
-                    alt=""
-                />
-                <span className={cx('fpName')}>Aparthotel Stare Miasto</span>
-                <span className={cx('fpCity')}>Old Town, Poland, Kraków</span>
-                <span className={cx('fpPrice')}>Starting from VND 2,300,000</span>
-                <div className={cx('fpRating')}>
-                    <button>8.9</button>
-                    <span>Exceptional</span>
-                </div>
-            </div>
-            <div className={cx('fpItem')}>
-                <img
-                    className={cx('fpImg')}
-                    src="https://r-xx.bstatic.com/xdata/images/city/170x136/688907.jpg?k=8a219233969467d9f7ff828918cce2a53b4db6f1da1039d27222441ffb97c409&o="
-                    alt=""
-                />
-                <span className={cx('fpName')}>Aparthotel Stare Miasto</span>
-                <span className={cx('fpCity')}>Old Town, Poland, Kraków</span>
-                <span className={cx('fpPrice')}>Starting from VND 2,300,000</span>
-                <div className={cx('fpRating')}>
-                    <button>8.9</button>
-                    <span>Exceptional</span>
-                </div>
-            </div>
+            {loading ? (
+                'Loading'
+            ) : (
+                <>
+                    {data.map((item, index) => (
+                        <div className={cx('fpItem')} key={item._id}>
+                            <img className={cx('fpImg')} src={item.photos[0]} alt="" />
+                            <span className={cx('fpName')}>{item.name}</span>
+                            <span className={cx('fpCity')}>{item.city}</span>
+                            <span className={cx('fpPrice')}>Starting from {item.cheapestPrice}</span>
+                            {item.rating && (
+                                <div className={cx('fpRating')}>
+                                    <button>{item.rating}</button>
+                                    <span>Exceptional</span>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </>
+            )}
         </div>
     );
 }

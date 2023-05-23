@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { DateRange } from 'react-date-range';
 import SearchItem from '~/components/SearchItem';
+import localhost from '~/config';
+import useFetch from '~/hooks/useFetch';
 
 const cx = classNames.bind(styles);
 
@@ -15,9 +17,19 @@ function List() {
     const [destiantion, setDestination] = useState(location.state.destiantion);
 
     const [openDate, setOpenDate] = useState(false);
-    const [date, setDate] = useState(location.state.date);
+    const [dates, setDates] = useState(location.state.dates);
 
     const [options, setOptions] = useState(location.state.options);
+    const [min, setMin] = useState(undefined);
+    const [max, setMax] = useState(undefined);
+
+    const { data, loading, error, reFetch } = useFetch(
+        `${localhost}/hotels?city=${destiantion}&min=${min || 0}&max=${max || 999}`,
+    );
+
+    const handleClick = () => {
+        reFetch();
+    };
     return (
         <div>
             <Navbar />
@@ -33,8 +45,8 @@ function List() {
                         <div className={cx('lsItem')}>
                             <label>Check-in-date</label>
                             <span onClick={() => setOpenDate(!openDate)}>
-                                {`${format(date[0].startDate, 'dd/MM/yyyy')} to ${format(
-                                    date[0].endDate,
+                                {`${format(dates[0].startDate, 'dd/MM/yyyy')} to ${format(
+                                    dates[0].endDate,
                                     'dd/MM/yyyy',
                                 )}`}
                             </span>
@@ -42,9 +54,9 @@ function List() {
                                 <DateRange
                                     className={cx('date')}
                                     editableDateInputs={true}
-                                    onChange={(item) => setDate([item.selection])}
+                                    onChange={(item) => setDates([item.selection])}
                                     moveRangeOnFirstSelection={false}
-                                    ranges={date}
+                                    ranges={dates}
                                     minDate={new Date()}
                                 />
                             )}
@@ -56,13 +68,21 @@ function List() {
                                     <span className={cx('lsOptionText')}>
                                         Min price <small> per night</small>
                                     </span>
-                                    <input type="number" className={cx('lsOptionInput')} />
+                                    <input
+                                        type="number"
+                                        className={cx('lsOptionInput')}
+                                        onChange={(e) => setMin(e.target.value)}
+                                    />
                                 </div>
                                 <div className={cx('lsOptionItem')}>
                                     <span className={cx('lsOptionText')}>
                                         Max price <small> per night</small>
                                     </span>
-                                    <input type="number" className={cx('lsOptionInput')} />
+                                    <input
+                                        type="number"
+                                        className={cx('lsOptionInput')}
+                                        onChange={(e) => setMax(e.target.value)}
+                                    />
                                 </div>
                                 <div className={cx('lsOptionItem')}>
                                     <span className={cx('lsOptionText')}>Adult</span>
@@ -71,6 +91,7 @@ function List() {
                                         min={1}
                                         className={cx('lsOptionInput')}
                                         value={options.adult}
+                                        onChange={(e) => setOptions((prev) => ({ ...prev, adult: e.target.value }))}
                                     />
                                 </div>
                                 <div className={cx('lsOptionItem')}>
@@ -80,26 +101,33 @@ function List() {
                                         min={0}
                                         className={cx('lsOptionInput')}
                                         value={options.children}
+                                        onChange={(e) => setOptions((prev) => ({ ...prev, children: e.target.value }))}
                                     />
                                 </div>
                                 <div className={cx('lsOptionItem')}>
                                     <span className={cx('lsOptionText')}>Room</span>
-                                    <input type="number" min={1} className={cx('lsOptionInput')} value={options.room} />
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        className={cx('lsOptionInput')}
+                                        value={options.room}
+                                        onChange={(e) => setOptions((prev) => ({ ...prev, room: e.target.value }))}
+                                    />
                                 </div>
                             </div>
                         </div>
-                        <button>Search</button>
+                        <button onClick={handleClick}>Search</button>
                     </div>
                     <div className={cx('listResult')}>
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
-                        <SearchItem />
+                        {loading ? (
+                            'Loading'
+                        ) : (
+                            <>
+                                {data.map((item) => (
+                                    <SearchItem item={item} key={item._id} />
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
